@@ -143,13 +143,86 @@ eshellが使えるようにしてあるので、基本的に同様の操作感�
 
 ### GitHubに入れる
 どこにいてもゴソゴソといじれるように、GitHubに入れておきます。
+GitHubに入れたからと言って別に公開したいわけではなくて、個人用ソース
+置き場として使っています。ただし、見られては困るような情報は入れないよ
+うに気をつけています。
 
 GitHubのサイトで「New Repoository」ボタンを押して新しいリポジトリを作
 ります。名前はローカルに作ったものと同じ「zlog_view」にします。
 
 ローカルのファイルをGitHubに入れます。`zlog_view`ディレクトリで、
 
-    git remote add origin 
+    git remote add github git@github.com:<user name>/<projectname>.git
+
+でGitHubをリモートとして登録して、
+
+    git push -u github master
+
+でGitHubに入れます。入ったかどうか、一応、確認しておきます。
+
+
+#作る
+
+## プログラム構造
+ソースとしては、
+* コントローラー
+* 表示部
+* zlogオブジェクト
+に分けます。
+プロセスは、とりあえず1つと思っていますが、zlogオブジェクトを別スレッ
+ドにするかもしれません。
+
+## zlogオブジェクト
+オブジェクトと言っても、クラスにしてインスタンス化とかするつもりはあり
+ません。ツールでの操作中は常に接続されていることを前提にして、関数を呼
+び出すたびにデバイスにアクセスすることにします。  
+操作は基本的にコールバックではなくて、ブロックするインターフェースです。
+データ量もそれほど多くないので、問題にはならないでしょう。  
+
+シリアル通信はここで隠蔽します。
+
+まずはシリアルと通信できないと話にならないので、そのあたりを試しながら
+作っていきます。
+
+ソースの名前は、`zlog.clj`にします。
+
+`serial-port`を`require`します。
+
+```clojure
+(ns zlog-view.zlog
+  (require [serial-port :as sp]))
+```
+
+zlogのコマンドにわかりやすい名前を付けます。
+(def command-name
+  {:dataset \s
+   :getdata \a
+   :version \v
+   :erase \x
+   :reboot \R
+   :reset \*})
+
+
+
+コマンドの実行のたびにシリアルポートへの接続を行なうことにするので、接
+続/切断用の関数を作ります。
+
+```clojure
+;; connet control
+(defn- connect [port-id]
+  (try
+    (sp/open port-id)
+    (catch Exception e false)))
+
+(defn- disconnect [port]
+  (try
+    (sp/close port)
+    (catch Exception e false)))
+```
+
+
+
+
 
 
 
