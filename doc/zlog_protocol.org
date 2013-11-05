@@ -1,0 +1,104 @@
+
+Zlog altimeter protocol
+
+* preface
+This protocol data is retrieved from zlog3.pl which is on
+HexpertSystems.com.
+
+* Serial I/F setting
+baudrate : 115200 # can be changed
+parity   : none
+databits : 8
+stopbits : 1
+handshake: none
+
+* Altitude data set
+
+** Format
+|              | size | type         | val |
+|--------------+------+--------------+-----|
+| header start |    1 | const        |  80 |
+| rate         |    2 | val          |     |
+| sample count |    2 | val          |     |
+| trigger      |    1 | val          |     |
+|--------------+------+--------------+-----|
+| altitude val |    2 | signed 16bit |     |
+| ...          |      |              |     |
+
+* Commands
+
+** Get data set info
+Get data set list from zlog.
+
+*** Send
+| command |
+|---------|
+| s       |
+|---------|
+
+*** Output
+Multiline data separated by \r\n.
+Each line contains "<data set num>,<?>".
+
+
+** Get Dataset
+Request a altitude data
+
+*** Send
+| command | param             |
+|---------+-------------------|
+| a       | <data set number> |
+|---------+-------------------|
+
+*** Output
+Altitude data set
+
+** Version
+Request zlog its version
+
+*** Send
+| command |
+|---------|
+| v       |
+|---------|
+
+
+*** Output
+Zlog version infomaition.
+
+** Erase
+Erase all data in zlog's memory.
+
+*** Send
+| command |
+|---------|
+| x       |
+|---------|
+
+*** Output
+?
+
+** Reboot
+Reboot zlog
+
+*** Send
+| command |
+|---------|
+| R       |
+|---------|
+
+*** Output
+?
+
+** Factory reset
+Load factory defaults.
+
+*** Send
+| command |
+|---------|
+| *       |
+|---------|
+
+*** Output
+?
+
