@@ -5,4 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [serial-port "1.1.2"]
-                 [seesaw "1.4.4"]])
+                 [seesaw "1.4.4"]
+                 [org.jfree/jfreechart "1.0.15"]])
